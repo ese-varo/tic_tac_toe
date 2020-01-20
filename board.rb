@@ -1,4 +1,4 @@
-class board
+class Board
   def initialize(size)
     size = 3 if size < 3 || size > 999
 
