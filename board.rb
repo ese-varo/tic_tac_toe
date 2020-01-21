@@ -15,6 +15,18 @@ class Board
     @free_cells
   end
 
+  def fill_matrix
+    c = 1
+    size.times do |i|
+      matrix.push([])
+      size.times do |j|
+        cell = Cell.new(c, "%03d"%c)
+        matrix[i][j] = cell 
+        c += 1
+      end
+    end
+  end
+
   private 
 
   attr_writer :matrix
