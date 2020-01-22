@@ -2,32 +2,67 @@ require_relative "board"
 require_relative "cell"
 require_relative "player"
 
-puts "Please enter the number of columns to create board"
-board = Board.new(gets.chomp.to_i)
-puts "Please enter the name of the first player"
-player1 = Player.new(gets.chomp, " X ")
-player1.turn = true
-puts "Hi #{player1.name}! your symbol is#{player1.symbol}"
-puts "Please enter the name of the second player"
-player2 = Player.new(gets.chomp, " O ")
-puts "Hi #{player2.name}! your symbol is#{player2.symbol}"
+def start_game
+  trackers = {counter: 0, winner: false, last_winner: ""}
+  board = create_board
+  board.fill_matrix
+  player1 = add_player(" X ", "first")
+  player2 = add_player(" O ", "second")
+  player1.turn = true
+  sleep 2
+  new_match(board, player1, player2, trackers)
+end
 
-sleep 2
+def new_match(board, player1, player2, trackers)
+  while board.free_cells? && !trackers[:winner]
+    print_turn(board)
+    next_move(board, player1, player2)
+    print_turn(board)
+    trackers[:counter] += 1
+    board.free_cells = false unless trackers[:counter] < board.size** 2
+  end
+  continue_playing?
+end
 
-board.fill_matrix
-counter = 0
-winner = false
-last_winner = 0
+def continue_playing?
+  puts "Empate!!"
+end
+
+def next_move(board, player1, player2)
+  if player1.turn?
+    who_next?(player1, board)
+    player1.turn, player2.turn = false, true
+  else
+    who_next?(player2, board)
+    player2.turn, player1.turn = false, true
+  end
+end
+
+def add_player(symbol, which_player)
+  puts "Please enter the name of the #{which_player} player"
+  player = Player.new(gets.chomp, symbol)
+  puts "Hi #{player.name}! your symbol is#{player.symbol}"
+  player
+end
+
+def create_board
+  puts "Please enter the number of columns to create board"
+  Board.new(gets.chomp.to_i)
+end
 
 def who_next?(player, board)
-  puts "#{player.name} please enter the number of a free cell!"
-  selected_cell = gets.chomp.to_i
+  selected_cell = select_cell(player)
   if valid_selection?(selected_cell, board)
     asign_symbol(player, board, selected_cell)
   else
     print_turn(board)
     who_next?(player, board)
   end
+end
+
+def select_cell(player)
+  puts "#{player.name} please enter the number of a free cell!"
+  gets.chomp.to_i
 end
 
 def asign_symbol(player, board, cell)
@@ -52,20 +87,4 @@ def y_position(cell, board)
   (cell - 1) % board.size
 end
 
-while board.free_cells? && !winner 
-  print_turn(board)
-  if player1.turn?
-    who_next?(player1, board)
-    player1.turn, player2.turn = false, true
-    # player2.turn = true
-  else
-    who_next?(player2, board)
-    player2.turn, player1.turn = false, true
-    # player2.turn = false
-    # player1.turn = true
-  end
-
-  print_turn(board)
-  counter += 1
-  board.free_cells = false unless counter <= board.size** 2
-end
+start_game
