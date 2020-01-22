@@ -22,7 +22,24 @@ def new_match(board, player1, player2, trackers)
     is_there_a_winner?(board, player1, player2, trackers) if trackers[:counter] >= (board.size * 2 - 1)
     board.free_cells = false unless trackers[:counter] < board.size** 2
   end
-  continue_playing?
+  continue_playing?(board, player1, player2, trackers)
+end
+
+def continue_playing?(board, player1, player2, trackers)
+  if trackers[:winner]
+    puts "Congratulations #{who_is_the_winner?(board, player1, player2)}!! You are the winner!!"
+  else
+    puts "Draw!!"
+  end
+  play_again?
+end
+
+def who_is_the_winner?(board, player1, player2)
+  player1.turn? ? "#{player2.name}" : "#{player1.name}"
+end
+
+def play_again?
+  puts "Play again?"
 end
 
 def is_there_a_winner?(board, player1, player2, trackers)
@@ -62,10 +79,6 @@ def falls_in_diagonal?(board, trackers)
   return "primary" if primary.include?(cell)
   return "secundary" if secundary.include?(cell)
   false
-end
-
-def continue_playing?
-  puts "Draw!! or winner!!"
 end
 
 def next_move(board, player1, player2, trackers)
