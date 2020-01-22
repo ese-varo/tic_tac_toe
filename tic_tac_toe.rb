@@ -26,9 +26,10 @@ def new_match(board, player1, player2, trackers)
 end
 
 def is_there_a_winner?(board, player1, player2, trackers)
+  is_a_diagonal_cell = falls_in_diagonal?(board, trackers) 
+  validate_diagonal(board, trackers, is_a_diagonal_cell) if is_a_diagonal_cell
   validate_vertical(board, trackers)
   validate_horizontal(board, trackers)
-  validate_diagonal(board, trackers) if falls_in_diagonal?(board, trackers)
 end
 
 def validate_vertical(board, trackers)
@@ -41,20 +42,26 @@ end
 
 def validate_horizontal(board, trackers)
   y = 0
-  puts board.matrix[trackers[:x]][trackers[:y]].label
-  puts "trackers :x #{trackers[:x]}, trackers :y #{trackers[:y]}"
   while y < board.size && board.matrix[trackers[:x]][y].label == board.matrix[trackers[:x]][trackers[:y]].label 
     y += 1
   end
   trackers[:winner] = true if y == board.size
 end
 
-def validate_diagonal(board, trackers)
-
+def validate_diagonal(board, trackers, diagonal)
+  board.diagonals[diagonal.to_sym].each do |cell|
+    return unless cell.label == board.matrix[trackers[:x]][trackers[:y]].label
+  end
+  trackers[:winner] = true
 end
 
 def falls_in_diagonal?(board, trackers)
-  
+  cell = board.matrix[trackers[:x]][trackers[:y]] 
+  primary = board.diagonals[:primary]
+  secundary = board.diagonals[:secundary]
+  return "primary" if primary.include?(cell)
+  return "secundary" if secundary.include?(cell)
+  false
 end
 
 def continue_playing?

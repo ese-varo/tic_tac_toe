@@ -1,4 +1,5 @@
 class Board
+  attr_accessor :diagonals
   attr_reader :size, :matrix
   attr_writer :free_cells
 
@@ -8,7 +9,7 @@ class Board
     @size = size
     @matrix = []
     @free_cells = true
-    @line_status = []
+    @diagonals = {primary: [], secundary: []}
   end
 
   def free_cells?
@@ -23,6 +24,7 @@ class Board
         matrix[i][j] = Cell.new(c, "%03d"%c)
       end
     end
+    capture_diagonals
   end
 
   def print_matrix
@@ -38,6 +40,13 @@ class Board
   private 
 
   attr_writer :matrix
+
+  def capture_diagonals
+    size.times do |index| 
+      diagonals[:primary].push(matrix[index][index])
+      diagonals[:secundary].push(matrix[(size - 1) - index][index])
+    end
+  end
 
   def top_and_bottom_lines(n)
     line = ""
