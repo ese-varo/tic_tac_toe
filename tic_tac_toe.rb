@@ -3,8 +3,7 @@ require_relative "cell"
 require_relative "player"
 
 def start_game
-  trackers = {counter: 0, winner: false, last_winner: "", x_index: nil, 
-              y_index: nil, selected_cell: nil}
+  trackers = {counter: 0, winner: false, last_winner: "", x: nil, y: nil, selected_cell: nil}
   board = create_board
   board.fill_matrix
   player1 = add_player(" X ", "first")
@@ -27,24 +26,34 @@ def new_match(board, player1, player2, trackers)
 end
 
 def is_there_a_winner?(board, player1, player2, trackers)
-  validate_vertical
-  validate_horizontal
-  validate_diagonal if falls_in_diagonal?
+  validate_vertical(board, trackers)
+  validate_horizontal(board, trackers)
+  validate_diagonal(board, trackers) if falls_in_diagonal?(board, trackers)
 end
 
-def validate_vertical(trackers)
-  
+def validate_vertical(board, trackers)
+  x = 0
+  while x < board.size && board.matrix[x][trackers[:y]].label == board.matrix[trackers[:x]][trackers[:y]].label 
+    x += 1
+  end
+  trackers[:winner] = true if x == board.size
 end
 
-def validate_horizontal(trackers)
-  
+def validate_horizontal(board, trackers)
+  y = 0
+  puts board.matrix[trackers[:x]][trackers[:y]].label
+  puts "trackers :x #{trackers[:x]}, trackers :y #{trackers[:y]}"
+  while y < board.size && board.matrix[trackers[:x]][y].label == board.matrix[trackers[:x]][trackers[:y]].label 
+    y += 1
+  end
+  trackers[:winner] = true if y == board.size
 end
 
-def validate_diagonal(trackers)
+def validate_diagonal(board, trackers)
 
 end
 
-def falls_in_diagonal?(trackers)
+def falls_in_diagonal?(board, trackers)
   
 end
 
@@ -75,8 +84,8 @@ def create_board
 end
 
 def who_next?(player, board, trackers)
-  # selected_cell = select_cell(player, board, trackers)
-  if valid_selection?(trackers[:selected_cell], board)
+  select_cell(player, board, trackers)
+  if valid_selection?(board, trackers)
     asign_symbol(player, board, trackers)
   else
     print_turn(board)
@@ -87,13 +96,13 @@ end
 def select_cell(player, board, trackers)
   puts "#{player.name} please enter the number of a free cell!"
   trackers[:selected_cell] = gets.chomp.to_i
-  trackers[:x_index] = x_position(trackers[:selected_cell], board)
-  trackers[:y_index] = y_position(trackers[:selected_cell], board)
+  trackers[:x] = x_position(trackers[:selected_cell], board)
+  trackers[:y] = y_position(trackers[:selected_cell], board)
 end
 
 def asign_symbol(player, board, trackers)
-  board.matrix[trackers[:x_index]][trackers[:y_index]].is_free = false
-  board.matrix[trackers[:x_index]][trackers[:y_index]].label = player.symbol
+  board.matrix[trackers[:x]][trackers[:y]].is_free = false
+  board.matrix[trackers[:x]][trackers[:y]].label = player.symbol
 end
 
 def print_turn(board)
@@ -101,8 +110,8 @@ def print_turn(board)
   board.print_matrix
 end
 
-def valid_selection?(cell, board)
-  board.matrix[x_position(cell, board)][y_position(cell, board)].is_free?
+def valid_selection?(board, trackers)
+  board.matrix[trackers[:x]][trackers[:y]].is_free?
 end
 
 def x_position(cell, board)
