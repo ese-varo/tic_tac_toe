@@ -131,7 +131,11 @@ def print_turn(board)
 end
 
 def valid_selection?(board, trackers)
-  board.matrix[trackers[:x]][trackers[:y]].is_free?
+  if trackers[:selected_cell] > board.size** 2 || trackers[:selected_cell] < 1
+    return false
+  else
+    board.matrix[trackers[:x]][trackers[:y]].is_free?
+  end
 end
 
 def x_position(cell, board)
