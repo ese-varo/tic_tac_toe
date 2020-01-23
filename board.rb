@@ -42,6 +42,8 @@ class Board
   attr_writer :matrix
 
   def capture_diagonals
+    diagonals[:primary] = []
+    diagonals[:secundary] = []
     size.times do |index| 
       diagonals[:primary].push(matrix[index][index])
       diagonals[:secundary].push(matrix[(size - 1) - index][index])
