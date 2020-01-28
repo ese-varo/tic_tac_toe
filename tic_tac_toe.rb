@@ -98,9 +98,11 @@ def validate_horizontal(board, trackers)
 end
 
 def validate_diagonal(board, trackers, diagonal)
-  board.diagonals[diagonal.to_sym].each do |cell|
-    return unless cell.label == board.matrix[trackers[:x]][trackers[:y]].label
+  captured_sym = board.matrix[trackers[:x]][trackers[:y]].label
+  return if board.diagonals[diagonal.to_sym].detect do |cell|
+    cell.label != captured_sym
   end
+
   trackers[:winner] = true
 end
 
@@ -156,7 +158,7 @@ def select_cell(player, board, trackers)
 end
 
 def asign_symbol(player, board, trackers)
-  board.matrix[trackers[:x]][trackers[:y]].is_free = false
+  board.matrix[trackers[:x]][trackers[:y]].free = false
   board.matrix[trackers[:x]][trackers[:y]].label = player.symbol
 end
 
@@ -169,7 +171,7 @@ def valid_selection?(board, trackers)
   if trackers[:selected_cell] > board.size**2 || trackers[:selected_cell] < 1
     false
   else
-    board.matrix[trackers[:x]][trackers[:y]].is_free?
+    board.matrix[trackers[:x]][trackers[:y]].free?
   end
 end
 

@@ -9,7 +9,7 @@ class Board
     @size = size
     @matrix = []
     @free_cells = true
-    @diagonals = {primary: [], secundary: []}
+    @diagonals = { primary: [], secundary: [] }
   end
 
   def free_cells?
@@ -19,12 +19,14 @@ class Board
   def fill_matrix
     size.times do |i|
       matrix.push([])
-      size.times do |j|
-        c = i * size + j + 1
-        matrix[i][j] = Cell.new(c, "%03d"%c)
-      end
+      size.times { |j| create_cell(i, j) }
     end
-    capture_diagonals
+    set_diagonals
+  end
+
+  def create_cell(x_index, y_index)
+    c = x_index * size + y_index + 1
+    matrix[x_index][y_index] = Cell.new(c, format('%03d', c))
   end
 
   def print_matrix
@@ -37,28 +39,36 @@ class Board
     top_and_bottom_lines(size * 8 + 1)
   end
 
-  private 
+  private
 
   attr_writer :matrix
 
-  def capture_diagonals
+  def set_diagonals
     diagonals[:primary] = []
     diagonals[:secundary] = []
-    size.times do |index| 
-      diagonals[:primary].push(matrix[index][index])
-      diagonals[:secundary].push(matrix[(size - 1) - index][index])
+    capture_diagonals
+  end
+
+  def capture_diagonals
+    size.times do |index|
+      add_cells(index)
     end
   end
 
-  def top_and_bottom_lines(n)
+  def add_cells(index)
+    diagonals[:primary].push(matrix[index][index])
+    diagonals[:secundary].push(matrix[(size - 1) - index][index])
+  end
+
+  def top_and_bottom_lines(columns)
     line = ''
-    n.times { line += '=' }
+    columns.times { line += '=' }
     puts line
   end
 
   def before_and_after_lines
     line = ''
-    size.times { line += '|       '}
+    size.times { line += '|       ' }
     puts line += '|'
   end
 
