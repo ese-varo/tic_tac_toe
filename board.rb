@@ -51,21 +51,20 @@ class Board
   end
 
   def top_and_bottom_lines(n)
-    line = ""
-    n.times { line += "=" }
+    line = ''
+    n.times { line += '=' }
     puts line
   end
 
   def before_and_after_lines
-    line = ""
-    size.times { line += "|       "}
-    puts line += "|"
+    line = ''
+    size.times { line += '|       '}
+    puts line += '|'
   end
 
   def numbers_line(index)
-    line_of_numbers = ""
+    line_of_numbers = ''
     size.times { |j| line_of_numbers += "|  #{matrix[index][j].label}  " }
-    puts line_of_numbers += "|"
+    puts line_of_numbers += '|'
   end
-
 end
